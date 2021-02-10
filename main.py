@@ -17,12 +17,10 @@ while run:
         if ev.type == pygame.QUIT:
             run = False
         elif ev.type == pygame.KEYDOWN:
-            if ev.mod == pygame.K_PAGEDOWN:
-                params['z'] += 1
-            elif ev.mod == pygame.K_PAGEUP:
-                params['z'] -= 1
-            elif ev.key == pygame.K_UP:
-                pass
+            if ev.key == pygame.K_PAGEDOWN:
+                params['z'] = str(min(13, int(params['z']) + 1))
+            elif ev.key == pygame.K_PAGEUP:
+                params['z'] = str(max(0, int(params['z']) - 1))
     screen.fill((0, 0, 0))
     name = get_image()
     image = pygame.image.load(name)
