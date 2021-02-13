@@ -3,8 +3,10 @@ import requests
 import sys
 from io import BytesIO
 
+pygame.init()
 COLOR_ACTIVE = (255, 204, 0)
 COLOR_INACTIVE = (58, 117, 196)
+INPUT_FONT = pygame.font.Font(None, 32)
 
 
 def change_color(box, ev, active):
@@ -32,7 +34,6 @@ params = {'ll': '133.795384,-25.694768',
 
 W, H = size = 620, 520
 FPS = 20
-pygame.init()
 screen = pygame.display.set_mode(size)
 run = True
 clock = pygame.time.Clock()
@@ -47,6 +48,20 @@ while run:
         if ev.type == pygame.QUIT:
             run = False
         elif ev.type == pygame.KEYDOWN:
+            if ev.type == pygame.KEYDOWN:
+                if active:
+                    if ev.key == pygame.K_RETURN:
+                        if text != '':
+                            try:
+                                print('ok')
+                            except FileNotFoundError:
+                                pass
+                        else:
+                            pass
+                    elif ev.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += ev.unicode
             if ev.key == pygame.K_PAGEDOWN:
                 params['z'] = str(min(13, int(params['z']) + 1))
             elif ev.key == pygame.K_PAGEUP:
@@ -56,6 +71,9 @@ while run:
     screen.fill((0, 0, 0))
     image = get_image()
     screen.blit(image, (10, 10))
+    txt_surface = INPUT_FONT.render(text, True, color)
+    input_box.w = max(200, txt_surface.get_width() + 10)
+    screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
     pygame.draw.rect(screen, color, input_box, 2)
     pygame.display.flip()
     clock.tick(FPS)
