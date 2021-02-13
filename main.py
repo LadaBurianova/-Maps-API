@@ -12,6 +12,7 @@ pygame.init()
 screen = pygame.display.set_mode(W, H)
 run = True
 clock = pygame.time.Clock()
+image = get_image()
 
 while run:
     for ev in pygame.event.get():
@@ -20,8 +21,10 @@ while run:
         elif ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_PAGEDOWN:
                 params['z'] = str(min(13, int(params['z']) + 1))
+                image = get_image()
             elif ev.key == pygame.K_PAGEUP:
                 params['z'] = str(max(0, int(params['z']) - 1))
+                image = get_image()
     screen.fill((0, 0, 0))
     name = get_image()
     image = pygame.image.load(name)
