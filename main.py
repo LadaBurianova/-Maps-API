@@ -28,6 +28,11 @@ while run:
     for ev in pygame.event.get():
         if ev.type == pygame.QUIT:
             run = False
+        elif ev.type == pygame.KEYDOWN:
+            if ev.key == pygame.K_PAGEDOWN:
+                params['z'] = str(min(13, int(params['z']) + 1))
+            elif ev.key == pygame.K_PAGEUP:
+                params['z'] = str(max(0, int(params['z']) - 1))
     screen.fill((0, 0, 0))
     image = get_image()
     screen.blit(image, (10, 10))
