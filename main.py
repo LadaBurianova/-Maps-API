@@ -1,15 +1,27 @@
 import pygame
+import requests
+import sys
+from io import BytesIO
 
 
 def get_image():
-    return ''
+    api_server = 'https://static-maps.yandex.ru/1.x/?'
+    response = requests.get(api_server, params)
+    if not response:
+        print("Http статус:", response.status_code, "(", response.text, ")")
+        sys.exit(response.status_code)
+    return pygame.image.load(BytesIO(response.content))
 
+
+params = {'ll': '133.795384,-25.694768',
+          'z': '4',
+          'l': 'sat'}
 
 W, H = 620, 520
 size = W, H
 FPS = 20
 pygame.init()
-screen = pygame.display.set_mode(W, H)
+screen = pygame.display.set_mode(size)
 run = True
 clock = pygame.time.Clock()
 image = get_image()
@@ -26,9 +38,7 @@ while run:
                 params['z'] = str(max(0, int(params['z']) - 1))
                 image = get_image()
     screen.fill((0, 0, 0))
-    name = get_image()
-    image = pygame.image.load(name)
-    screen.blit(screen, image, (10, 10))
+    screen.blit(image, (10, 10))
     pygame.display.flip()
     clock.tick(FPS)
 
