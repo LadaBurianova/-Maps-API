@@ -33,10 +33,29 @@ while run:
         elif ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_PAGEDOWN:
                 params['z'] = str(min(13, int(params['z']) + 1))
-                image = get_image()
             elif ev.key == pygame.K_PAGEUP:
                 params['z'] = str(max(0, int(params['z']) - 1))
-                image = get_image()
+            elif ev.key == pygame.K_RIGHT:
+                l1, l2 = tuple(map(float, params['ll'].split(',')))
+                l1 += 1 * int(params['z'])
+                if l1 >= 180:
+                    l1 = 0
+                params['ll'] = ','.join([str(l1), str(l2)])
+            elif ev.key == pygame.K_LEFT:
+                l1, l2 = tuple(map(float, params['ll'].split(',')))
+                l1 -= 1 * int(params['z'])
+                if l1 <= 0:
+                    l1 = 180
+                params['ll'] = ','.join([str(l1), str(l2)])
+            elif ev.key == pygame.K_UP:
+                l1, l2 = tuple(map(float, params['ll'].split(',')))
+                l2 = min(l2 + 1 * int(params['z']), 180)
+                params['ll'] = ','.join([str(l1), str(l2)])
+            elif ev.key == pygame.K_DOWN:
+                l1, l2 = tuple(map(float, params['ll'].split(',')))
+                l2 = max(l2 - 1 * int(params['z']), 0)
+                params['ll'] = ','.join([str(l1), str(l2)])
+            image = get_image()
     screen.fill((0, 0, 0))
     screen.blit(image, (10, 10))
     pygame.display.flip()
