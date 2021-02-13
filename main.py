@@ -8,6 +8,7 @@ COLOR_ACTIVE = (255, 204, 0)
 COLOR_INACTIVE = (58, 117, 196)
 INPUT_FONT = pygame.font.Font(None, 32)
 API_SERVER = 'https://static-maps.yandex.ru/1.x/?'
+API_GEOCODE_SERVER = "https://geocode-maps.yandex.ru/1.x/"
 
 
 def change_color(box, ev, active):
@@ -29,15 +30,19 @@ def get_image(response):
 params = {'ll': '133.795384,-25.694768',
           'z': '4',
           'l': 'sat',
-          'size': '500,400'}
-
+          'size': '500,400',
+          'pt': "37.56,55.71,pm2rdm"}
+params_gc = {
+    "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
+    "format": "json",
+    "geocode": ""}
 W, H = size = 620, 520
 FPS = 20
 screen = pygame.display.set_mode(size)
 run = True
 clock = pygame.time.Clock()
 
-input_box = pygame.Rect(10, 410, 150, 32)
+input_box = pygame.Rect(10, 415, 150, 32)
 text = ''
 color = COLOR_INACTIVE
 active = False
@@ -48,21 +53,30 @@ while run:
     for ev in pygame.event.get():
         if ev.type == pygame.QUIT:
             run = False
-        elif ev.type == pygame.KEYDOWN:
-            if ev.type == pygame.KEYDOWN:
-                if active:
-                    if ev.key == pygame.K_RETURN:
-                        if text != '':
-                            try:
-                                response = requests.get(text)
-                                image = get_image(response)
-                            except Exception:
-                                response = requests.get(API_SERVER, params)
-                                text = ''
-                    elif ev.key == pygame.K_BACKSPACE:
-                        text = text[:-1]
-                    else:
-                        text += ev.unicode
+        if ev.type == pygame.KEYDOWN:
+            if active:
+                if ev.key == pygame.K_RETURN:
+                    if text != '':
+                        try:
+                            params_gc["geocode"] = text
+                            response_gc = requests.get(API_GEOCODE_SERVER, params_gc)
+                            json_response = response_gc.json()
+                            place = json_response["response"]["GeoObjectCollection"]["featureMember"][0][
+                                "GeoObject"]
+                            place_address = place["metaDataProperty"]["GeocoderMetaData"]["text"]
+                            place_coodrds = ','.join(place["Point"]["pos"].split())
+                            params['pt'] = place_coodrds + ',' + 'pm2rdm'
+                            params['ll'] = place_coodrds
+                            response = requests.get(API_SERVER, params)
+                            image = get_image(response)
+                        except Exception as ex:
+                            response = requests.get(API_SERVER, params)
+                            text = ''
+                            print(ex.__class__)
+                elif ev.key == pygame.K_BACKSPACE:
+                    text = text[:-1]
+                else:
+                    text += ev.unicode
             if ev.key == pygame.K_PAGEDOWN:
                 params['z'] = str(min(13, int(params['z']) + 1))
                 response = requests.get(API_SERVER, params)
@@ -71,6 +85,7 @@ while run:
                 params['z'] = str(max(0, int(params['z']) - 1))
                 response = requests.get(API_SERVER, params)
                 image = get_image(response)
+            print(ev.key)
         elif ev.type == pygame.MOUSEBUTTONDOWN:
             active, color = change_color(input_box, ev, active)
     screen.fill((0, 0, 0))
