@@ -6,6 +6,7 @@ def get_image():
 
 
 W, H = 620, 520
+size = W, H
 FPS = 20
 pygame.init()
 screen = pygame.display.set_mode(W, H)
