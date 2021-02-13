@@ -58,6 +58,7 @@ while run:
                                 image = get_image(response)
                             except Exception:
                                 response = requests.get(API_SERVER, params)
+                                text = ''
                     elif ev.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                     else:
